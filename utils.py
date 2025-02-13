@@ -323,19 +323,6 @@ def process_intermediate_query(question, examplers, model, args):
             print(f"Agent {idx+1} ({agent_emoji[idx]}): {agent[0]}")
 
     fewshot_examplers = ""
-    medical_agent = Agent(instruction='You are a helpful medical agent.', role='medical expert', model_info=model)
-    if args.dataset == 'medqa':
-        random.shuffle(examplers)
-        for ie, exampler in enumerate(examplers[:5]):
-            exampler_question = f"[Example {ie+1}]\n" + exampler['question']
-            options = [f"({k}) {v}" for k, v in exampler['options'].items()]
-            random.shuffle(options)
-            exampler_question += " " + " ".join(options)
-            exampler_answer = f"Answer: ({exampler['answer_idx']}) {exampler['answer']}"
-            exampler_reason = tmp_agent.chat(f"Below is an example of medical knowledge question and answer. After reviewing the below medical question and answering, can you provide 1-2 sentences of reason that support the answer as you didn't know the answer ahead?\n\nQuestion: {exampler_question}\n\nAnswer: {exampler_answer}")
-            
-            exampler_question += f"\n{exampler_answer}\n{exampler_reason}\n\n"
-            fewshot_examplers += exampler_question
 
     print()
     cprint("[INFO] Step 2. Collaborative Decision Making", 'yellow', attrs=['blink'])
