@@ -1,6 +1,7 @@
 import os
 import json
 import random
+from typing import List
 from tqdm import tqdm
 from prettytable import PrettyTable 
 from termcolor import cprint
@@ -207,21 +208,12 @@ def setup_model(model_name):
     else:
         raise ValueError(f"Unsupported model: {model_name}")
 
-def load_data(dataset):
-    test_qa = []
-    examplers = []
-
-    test_path = f'../data/{dataset}/test.jsonl'
-    with open(test_path, 'r') as file:
-        for line in file:
-            test_qa.append(json.loads(line))
-
-    train_path = f'../data/{dataset}/train.jsonl'
-    with open(train_path, 'r') as file:
-        for line in file:
-            examplers.append(json.loads(line))
-
-    return test_qa, examplers
+def load_data(task : str) -> List[str]:
+    if task == 'ehrshot-new':
+        diseases = ['hypertension', 'hyperlipidemia', 'pancreatic cancer', 'celiac', 'lupus', 'acute myocardial infarction']
+        return [f"In predicting a prognosis of {disease}, how much more costly is a false positive(wrongly predicting the disease) to a false negative(missing the disease)?" for disease in diseases]
+    else:
+        raise ValueError(f"Unsupported task: {task}")
 
 def create_question(sample, dataset):
     if dataset == 'medqa':
@@ -276,7 +268,7 @@ def process_basic_query(question, examplers, model, args):
     
     return final_decision
 
-def process_intermediate_query(question, examplers, model, args):
+def process_intermediate_query(question, model, args):
     cprint("[INFO] Step 1. Expert Recruitment", 'yellow', attrs=['blink'])
     recruit_prompt = f"""You are an experienced medical expert who recruits a group of experts with diverse identity and ask them to discuss and solve the given medical query."""
     
