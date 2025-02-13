@@ -33,7 +33,7 @@ for no, sample in enumerate(tqdm(test_qa)):
     print(f"\n[INFO] no: {no}")
     total_api_calls = 0
 
-    question, img_path = create_question(sample, args.dataset)
+    question, img_path = create_question(sample)
     difficulty = determine_difficulty(question, args.difficulty)
 
     print(f"difficulty: {difficulty}")
@@ -44,16 +44,6 @@ for no, sample in enumerate(tqdm(test_qa)):
         final_decision = process_intermediate_query(question, examplers, args.model, args)
     elif difficulty == 'advanced':
         final_decision = process_advanced_query(question, args.model, args)
-
-    if args.dataset == 'medqa':
-        results.append({
-            'question': question,
-            'label': sample['answer_idx'],
-            'answer': sample['answer'],
-            'options': sample['options'],
-            'response': final_decision,
-            'difficulty': difficulty
-        })
 
 # Save results
 path = os.path.join(os.getcwd(), 'output')
