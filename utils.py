@@ -5,7 +5,6 @@ from tqdm import tqdm
 from prettytable import PrettyTable 
 from termcolor import cprint
 from pptree import Node
-import google.generativeai as genai
 from openai import OpenAI
 from pptree import *
 
@@ -17,8 +16,7 @@ class Agent:
         self.img_path = img_path
 
         if self.model_info == 'gemini-pro':
-            self.model = genai.GenerativeModel('gemini-pro')
-            self._chat = self.model.start_chat(history=[])
+            raise NotImplementedError("Gemini Pro is not supported.")
         elif self.model_info in ['gpt-3.5', 'gpt-4', 'gpt-4o', 'gpt-4o-mini']:
             self.client = OpenAI(api_key=os.environ['openai_api_key'])
             self.messages = [
@@ -202,8 +200,7 @@ def parse_group_info(group_info):
 
 def setup_model(model_name):
     if 'gemini' in model_name:
-        genai.configure(api_key=os.environ['genai_api_key'])
-        return genai, None
+        raise NotImplementedError("Gemini is not supported.")
     elif 'gpt' in model_name:
         client = OpenAI(api_key=os.environ['openai_api_key'])
         return None, client
