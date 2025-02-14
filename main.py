@@ -3,12 +3,9 @@ import json
 import random
 import argparse
 from tqdm import tqdm
-from termcolor import cprint
-from pptree import print_tree
-from prettytable import PrettyTable
+from datetime import datetime
 from utils import (
-    Agent, Group, parse_hierarchy, parse_group_info, setup_model,
-    load_data, create_question, determine_difficulty,
+    load_data,
     process_basic_query, process_intermediate_query, process_advanced_query
 )
 
@@ -17,8 +14,6 @@ parser.add_argument('--task', type=str)
 parser.add_argument('--difficulty', type=str)
 parser.add_argument('--model', type=str, default='gpt-4o-mini')
 args = parser.parse_args()
-
-model, client = setup_model(args.model)
 
 questions = load_data(args.task)
 
@@ -45,5 +40,6 @@ path = os.path.join(os.getcwd(), 'output')
 if not os.path.exists(path):
     os.makedirs(path)
 
-with open(f'output/{args.model}_{args.dataset}_{args.difficulty}.json', 'w') as file:
+timestamp = datetime.now().strftime('%m%d_%H%M')
+with open(f'output/{args.task}_{args.difficulty}_{args.model}_{timestamp}.json', 'w') as file:
     json.dump(results, file, indent=4)

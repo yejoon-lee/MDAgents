@@ -211,7 +211,7 @@ def setup_model(model_name):
 def load_data(task : str) -> List[str]:
     if task == 'ehrshot-new':
         diseases = ['hypertension', 'hyperlipidemia', 'pancreatic cancer', 'celiac', 'lupus', 'acute myocardial infarction']
-        return [f"In predicting a prognosis of {disease}, how much more costly is a false positive(wrongly predicting the disease) to a false negative(missing the disease)?" for disease in diseases]
+        return [f"In predicting a prognosis of {disease}, how much more costly is a false negative(missing the disease) to a false positive(wrongly predicting the disease)?" for disease in diseases]
     elif task == 'ehrshot-lab':
         raise NotImplementedError("EHRShot Lab is not supported.")
     # TODO
@@ -432,7 +432,8 @@ def process_intermediate_query(question, model, args):
     _decision = moderator.temp_responses(f"Given each agent's final answer, please review each agent's opinion and make the final answer to the question by taking a median. Your answer should be like below format:\nAnswer: 15\n{final_answer}\n\nQuestion: {question}", img_path=None)
     final_decision = {'majority': _decision}
 
-    print(f"{'\U0001F468\u200D\u2696\uFE0F'} moderator's final decision (by majority vote):", _decision)
+    moderator_emoji = '\U0001F468\u200D\u2696\uFE0F'
+    print(f"{moderator_emoji} moderator's final decision (by majority vote):", _decision)
     print()
 
     return final_decision
