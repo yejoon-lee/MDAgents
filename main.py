@@ -40,6 +40,6 @@ path = os.path.join(os.getcwd(), 'output')
 if not os.path.exists(path):
     os.makedirs(path)
 
-timestamp = datetime.now().strftime('%m%d_%H%M')
+timestamp = datetime.now().strftime('%m%d-%H%M')
 with open(f'output/{args.task}_{args.difficulty}_{args.model}_{timestamp}.json', 'w') as file:
     json.dump(results, file, indent=4)
