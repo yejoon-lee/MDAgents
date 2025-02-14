@@ -212,6 +212,11 @@ def load_data(task : str) -> List[str]:
     if task == 'ehrshot-new':
         diseases = ['hypertension', 'hyperlipidemia', 'pancreatic cancer', 'celiac', 'lupus', 'acute myocardial infarction']
         return [f"In predicting a prognosis of {disease}, how much more costly is a false positive(wrongly predicting the disease) to a false negative(missing the disease)?" for disease in diseases]
+    elif task == 'ehrshot-lab':
+        raise NotImplementedError("EHRShot Lab is not supported.")
+    # TODO
+    elif task == 'bmad':
+        pass
     else:
         raise ValueError(f"Unsupported task: {task}")
 
