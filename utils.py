@@ -319,7 +319,7 @@ def process_intermediate_query(question, model, args):
         except:
             print(f"Agent {idx+1} ({agent_emoji[idx]}): {agent[0]}")
 
-    fewshot_examplers = ""
+    fewshot_examplers = "Question: In predicting a possible malignant breast lesions, how much more costly is a false negative(missing the disease) to a false positive(wrongly predicting the disease)?\n\nAnswer: 49"
 
     print()
     cprint("[INFO] Step 2. Collaborative Decision Making", 'yellow', attrs=['blink'])
