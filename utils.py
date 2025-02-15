@@ -274,6 +274,8 @@ def process_basic_query(question, examplers, model, args):
     return final_decision
 
 def process_intermediate_query(question, model, args):
+    cprint(f"Question: {question}", 'green', attrs=['bold'])
+    print()
     cprint("[INFO] Step 1. Expert Recruitment", 'yellow', attrs=['blink'])
     recruit_prompt = f"""You are an experienced medical expert who recruits a group of experts with diverse identity and ask them to discuss and solve the given medical query."""
     
@@ -432,8 +434,12 @@ def process_intermediate_query(question, model, args):
     _decision = moderator.temp_responses(f"Given each agent's final answer, please review each agent's opinion and make the final answer to the question by taking a median. Your answer should be like below format:\nAnswer: 15\n{final_answer}\n\nQuestion: {question}", img_path=None)
     final_decision = {'majority': _decision}
 
+    print("\nFinal answers from each agent:")
+    for agent_name, answer in final_answer.items():
+        print(f"- {agent_name}: {answer}")
+
     moderator_emoji = '\U0001F468\u200D\u2696\uFE0F'
-    print(f"{moderator_emoji} moderator's final decision (by majority vote):", _decision)
+    print(f"{moderator_emoji} moderator's final decision (by taking median):", _decision)
     print()
 
     return final_decision
