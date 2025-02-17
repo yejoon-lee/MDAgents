@@ -217,6 +217,10 @@ def load_data(task : str) -> List[str]:
     # TODO
     elif task == 'bmad':
         pass
+    elif task == 'baseline':
+        death = "In predicting the death of a patient, how much more costly is a false negative(missing the death) to a false positive(wrongly predicting the death)?"
+        benign = "In predicting a prognosis of a mild cough, how much more costly is a false negative(missing the symptoms) to a false positive(wrongly predicting the symptoms)?"
+        return [death, benign]
     else:
         raise ValueError(f"Unsupported task: {task}")
 
