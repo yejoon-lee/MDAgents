@@ -214,9 +214,30 @@ def load_data(task : str) -> List[str]:
         return [f"In predicting a prognosis of {disease}, how much more costly is a false negative(missing the disease) to a false positive(wrongly predicting the disease)?" for disease in diseases]
     elif task == 'ehrshot-lab':
         raise NotImplementedError("EHRShot Lab is not supported.")
-    # TODO
-    elif task == 'bmad':
-        pass
+    elif task == 'bmad-brats2021':
+        # Brain MRI
+        diseases = ['glioblastoma', 'lower-grade gliomas']
+        return [f"In predicting a prognosis of {disease}, how much more costly is a false negative(missing the disease) to a false positive(wrongly predicting the disease)?" for disease in diseases]
+    elif task == 'bmad-hist':
+        # Liver CT
+        diseases = ['hepatocellular carcinoma', 'liver metastases', 'liver cysts', 'hemangiomas', 'hepatic adenomas', 'focal nodular hyperplasia', 'fatty liver disease', 'liver cirrhosis', 'hepatitis-related liver damage']
+        return [f"In predicting a prognosis of {disease}, how much more costly is a false negative(missing the disease) to a false positive(wrongly predicting the disease)?" for disease in diseases]
+    elif task == 'bmad-resc':
+        # Retinal OCT
+        diseases = ['diabetic retinopathy', 'hypertensive retinopathy', 'retinal vein occlusion', 'retinal artery occlusion', 'macular edema', 'glaucoma', 'age-related macular degeneration']
+        return [f"In predicting a prognosis of {disease}, how much more costly is a false negative(missing the disease) to a false positive(wrongly predicting the disease)?" for disease in diseases]
+    elif task == 'bmad-oct2017':
+        # Retinal OCT
+        diseases = ['choroidal neovascularization', 'diabetic macular edema', 'drusen']
+        return [f"In predicting a prognosis of {disease}, how much more costly is a false negative(missing the disease) to a false positive(wrongly predicting the disease)?" for disease in diseases]
+    elif task == 'bmad-rsna':
+        # Chest X-Ray
+        diseases = ['pneumonia', 'lung opacity', 'atelectasis', 'pulmonary edema', 'pleural effusion', 'pneumothorax']
+        return [f"In predicting a prognosis of {disease}, how much more costly is a false negative(missing the disease) to a false positive(wrongly predicting the disease)?" for disease in diseases]
+    elif task == 'bmad-camelyon16':
+        # Pathology
+        diseases = ['breast cancer metastases']
+        return [f"In predicting a prognosis of {disease}, how much more costly is a false negative(missing the disease) to a false positive(wrongly predicting the disease)?" for disease in diseases]
     elif task == 'baseline':
         death = "In predicting the death of a patient, how much more costly is a false negative(missing the death) to a false positive(wrongly predicting the death)?"
         benign = "In predicting a prognosis of a mild cough, how much more costly is a false negative(missing the symptoms) to a false positive(wrongly predicting the symptoms)?"
