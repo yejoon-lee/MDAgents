@@ -209,39 +209,56 @@ def setup_model(model_name):
         raise ValueError(f"Unsupported model: {model_name}")
 
 def load_data(task : str) -> List[str]:
-    if task == 'ehrshot-new':
-        diseases = ['hypertension', 'hyperlipidemia', 'pancreatic cancer', 'celiac', 'lupus', 'acute myocardial infarction']
-        return [f"In predicting a prognosis of {disease}, how much more costly is a false negative(missing the disease) to a false positive(wrongly predicting the disease)?" for disease in diseases]
-    elif task == 'ehrshot-lab':
-        raise NotImplementedError("EHRShot Lab is not supported.")
+    TEMPLATE_EHRSHOT_NEW = "In predicting a prognosis of {task}, how much more costly is a false negative(missing the disease) to a false positive(wrongly predicting the disease)?"
+    TEMPLATE_BMAD = "Assume a patient is going through {test}. Diseases and conditions such as {diseases} can be found. In such scenario, how much more costly is a false negative(missing the disease) to a false positive(wrongly predicting the disease)?"
+
+    if task in ['ehrshot-hypertension', 'ehrshot-hyperlipidemia', 'ehrshot-pancreatic_cancer', 'ehrshot-celiac', 'ehrshot-lupus', 'ehrshot-acute_myocardial_infarction']:
+        disease = task.split('-')[1]  # Extract disease name from task string
+        disease = disease.replace('_', ' ')
+        return TEMPLATE_EHRSHOT_NEW.format(task=disease)
+    
     elif task == 'bmad-brats2021':
         # Brain MRI
+        test = 'brain MRI'
         diseases = ['glioblastoma', 'lower-grade gliomas']
-        return [f"In predicting a prognosis of {disease}, how much more costly is a false negative(missing the disease) to a false positive(wrongly predicting the disease)?" for disease in diseases]
+        return TEMPLATE_BMAD.format(test=test, diseases=', and '.join(diseases))
+    
     elif task == 'bmad-hist':
         # Liver CT
+        test = 'liver CT'
         diseases = ['hepatocellular carcinoma', 'liver metastases', 'liver cysts', 'hemangiomas', 'hepatic adenomas', 'focal nodular hyperplasia', 'fatty liver disease', 'liver cirrhosis', 'hepatitis-related liver damage']
-        return [f"In predicting a prognosis of {disease}, how much more costly is a false negative(missing the disease) to a false positive(wrongly predicting the disease)?" for disease in diseases]
+        return TEMPLATE_BMAD.format(test=test, diseases=', '.join(diseases[:-1]) + ', and ' + diseases[-1])
+    
     elif task == 'bmad-resc':
         # Retinal OCT
+        test = 'retinal OCT'
         diseases = ['diabetic retinopathy', 'hypertensive retinopathy', 'retinal vein occlusion', 'retinal artery occlusion', 'macular edema', 'glaucoma', 'age-related macular degeneration']
-        return [f"In predicting a prognosis of {disease}, how much more costly is a false negative(missing the disease) to a false positive(wrongly predicting the disease)?" for disease in diseases]
+        return TEMPLATE_BMAD.format(test=test, diseases=', '.join(diseases[:-1]) + ', and ' + diseases[-1])
+    
     elif task == 'bmad-oct2017':
         # Retinal OCT
+        test = 'retinal OCT'
         diseases = ['choroidal neovascularization', 'diabetic macular edema', 'drusen']
-        return [f"In predicting a prognosis of {disease}, how much more costly is a false negative(missing the disease) to a false positive(wrongly predicting the disease)?" for disease in diseases]
+        return TEMPLATE_BMAD.format(test=test, diseases=', '.join(diseases[:-1]) + ', and ' + diseases[-1])
+    
     elif task == 'bmad-rsna':
         # Chest X-Ray
+        test = 'chest X-ray'
         diseases = ['pneumonia', 'lung opacity', 'atelectasis', 'pulmonary edema', 'pleural effusion', 'pneumothorax']
-        return [f"In predicting a prognosis of {disease}, how much more costly is a false negative(missing the disease) to a false positive(wrongly predicting the disease)?" for disease in diseases]
+        return TEMPLATE_BMAD.format(test=test, diseases=', '.join(diseases[:-1]) + ', and ' + diseases[-1])
+    
     elif task == 'bmad-camelyon16':
         # Pathology
+        test = 'pathology test'
         diseases = ['breast cancer metastases']
-        return [f"In predicting a prognosis of {disease}, how much more costly is a false negative(missing the disease) to a false positive(wrongly predicting the disease)?" for disease in diseases]
-    elif task == 'baseline':
-        death = "In predicting the death of a patient, how much more costly is a false negative(missing the death) to a false positive(wrongly predicting the death)?"
-        benign = "In predicting a prognosis of a mild cough, how much more costly is a false negative(missing the symptoms) to a false positive(wrongly predicting the symptoms)?"
-        return [death, benign]
+        return TEMPLATE_BMAD.format(test=test, diseases=diseases[0])
+    
+    elif task == 'baseline-death':
+        return "In predicting the death of a patient, how much more costly is a false negative(missing the death) to a false positive(wrongly predicting the death)?"
+    
+    elif task == 'baseline-benign':
+        return "In predicting a prognosis of a mild cough, how much more costly is a false negative(missing the symptoms) to a false positive(wrongly predicting the symptoms)?"
+    
     else:
         raise ValueError(f"Unsupported task: {task}")
 
@@ -347,6 +364,8 @@ def process_intermediate_query(question, model, args):
             print(f"Agent {idx+1} ({agent_emoji[idx]}): {agent[0]}")
 
     fewshot_examplers = "Question: In predicting a possible malignant breast lesions, how much more costly is a false negative(missing the disease) to a false positive(wrongly predicting the disease)?\n\nAnswer: 49"
+    if args.task == "bmad-camelyon16":
+        fewshot_examplers = ""
 
     print()
     cprint("[INFO] Step 2. Collaborative Decision Making", 'yellow', attrs=['blink'])
