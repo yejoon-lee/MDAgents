@@ -1,34 +1,26 @@
 import os
 import json
-import random
 import argparse
-from tqdm import tqdm
 from datetime import datetime
-from utils import (
-    load_data,
-    process_basic_query, process_intermediate_query, process_advanced_query
-)
+from utils import load_relative_cost, load_fpfn, ask_relative_cost, ask_fpfn
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--task', type=str)
-parser.add_argument('--difficulty', type=str)
+parser.add_argument('--mode', type=str, default='relative_cost') # 'fpfn' or 'relative_cost'
 parser.add_argument('--model', type=str, default='gpt-4o-mini')
 args = parser.parse_args()
 
-questions = load_data(args.task)
+print(f"[INFO] Using OpenAI API key ending with {os.getenv('OPENAI_API_KEY')[-10:]}\n\n")
 
-agent_emoji = ['\U0001F468\u200D\u2695\uFE0F', '\U0001F468\U0001F3FB\u200D\u2695\uFE0F', '\U0001F469\U0001F3FC\u200D\u2695\uFE0F', '\U0001F469\U0001F3FB\u200D\u2695\uFE0F', '\U0001f9d1\u200D\u2695\uFE0F', '\U0001f9d1\U0001f3ff\u200D\u2695\uFE0F', '\U0001f468\U0001f3ff\u200D\u2695\uFE0F', '\U0001f468\U0001f3fd\u200D\u2695\uFE0F', '\U0001f9d1\U0001f3fd\u200D\u2695\uFE0F', '\U0001F468\U0001F3FD\u200D\u2695\uFE0F']
-random.shuffle(agent_emoji)
-
-print(f"\n[INFO] Processing question")
-print(f"difficulty: {args.difficulty}")
-
-if args.difficulty == 'basic':
-    final_decision = process_basic_query(questions, args.model, args)
-elif args.difficulty == 'intermediate':
-    final_decision = process_intermediate_query(questions, args.model, args)
-elif args.difficulty == 'advanced':
-    final_decision = process_advanced_query(questions, args.model, args)
+if args.mode == 'fpfn':
+    question = load_fpfn(args.task)
+    response = ask_fpfn(question, args.model)  # zero-shot
+elif args.mode == 'relative_cost':
+    question = load_relative_cost(args.task)
+    examplar = "Question: In predicting a possible ulcerative colitis, How much more costly is a false negative(missing the disease) to a false positive(wrongly predicting the disease)?\n\nAnswer: 13"
+    response = ask_relative_cost(question, args.model, examplar)  # 1-shot
+else:
+    raise ValueError('Invalid mode')
 
 # Save result
 path = os.path.join(os.getcwd(), 'output')
@@ -36,5 +28,5 @@ if not os.path.exists(path):
     os.makedirs(path)
 
 timestamp = datetime.now().strftime('%m%d-%H%M')
-with open(f'output/{args.task}_{args.difficulty}_{args.model}_{timestamp}.json', 'w') as file:
-    json.dump(final_decision, file, indent=4)
+with open(f'output/{args.mode}/{args.task}_{args.model}_{timestamp}.json', 'w') as file:
+    json.dump(response, file, indent=4)
